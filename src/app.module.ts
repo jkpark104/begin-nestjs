@@ -4,9 +4,11 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BoardsModule } from './apis/boards/boards.module';
+import { ProductsModule } from './apis/products/products.module';
 
 @Module({
   imports: [
+    ProductsModule,
     BoardsModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({

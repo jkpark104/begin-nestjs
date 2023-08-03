@@ -1,16 +1,16 @@
 # compose 파일 버전
 version: '3'
 services:
-    mybackend:
-      build:
-        context: .
-        dockerfile: Dockerfile
-      ports:
-        - "3000:3000"
-      volumes:
-        - ./src:/myfolder/src
-      env_file:
-        - ./.env
+    # mybackend:
+    #   build:
+    #     context: .
+    #     dockerfile: Dockerfile
+    #   ports:
+    #     - "3000:3000"
+    #   volumes:
+    #     - ./src:/myfolder/src
+    #   env_file:
+    #     - ./.env
 
 
       # 서비스 명
