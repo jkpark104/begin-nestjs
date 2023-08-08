@@ -7,6 +7,7 @@ import {
   IProductServiceUpdate,
   IProductsServiceCheckSoldOut,
   IProductsServiceCreate,
+  IProductsServiceDelete,
 } from './interfaces/products-service.interface';
 
 @Injectable()
@@ -68,5 +69,35 @@ export class ProductsService {
     if (product.isSoldOut) {
       throw new UnprocessableEntityException('이미 판매된 상품입니다.');
     }
+  }
+
+  async delete({ productId }: IProductsServiceDelete): Promise<boolean> {
+    // 1. 실제 삭제
+    // const result = await this.productsRepository.delete({ id: productId });
+
+    // return result.affected ? true : false;
+
+    // 2. 소프트 삭제 - isDeleted
+    // this.productsRepository.update({ id: productId }, { isDeleted: true });
+
+    // 3. 소프트 삭제 - deletedAt
+    // this.productsRepository.update(
+    //   { id: productId },
+    //   { deletedAt: new Date() },
+    // );
+
+    // 4. 소프트 삭제 - typeorm softRemove
+    // this.productsRepository.softRemove({ id: productId });
+    // 단점 : id로만 삭제 가능
+    // 장점 : 여러 id를 배열로 받아서 삭제 가능
+
+    // 5. 소프트 삭제 - typeorm softDelete
+    // this.productsRepository.softDelete({ id: productId });
+    // 단점: 여러 ID 한 번에 삭제 불가능
+    // 장점: 다른 칼럼으로도 삭제ㅐ 가능
+
+    const result = await this.productsRepository.softDelete({ id: productId });
+
+    return result.affected ? true : false;
   }
 }

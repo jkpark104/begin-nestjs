@@ -18,3 +18,7 @@ export interface IProductServiceUpdate {
 export interface IProductsServiceCheckSoldOut {
   product: Product;
 }
+
+export interface IProductsServiceDelete {
+  productId: string;
+}

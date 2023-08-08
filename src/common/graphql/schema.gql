@@ -61,6 +61,7 @@ type Query {
 type Mutation {
   createProduct(createProductInput: CreateProductInput!): Product!
   updateProduct(productId: String!, updateProductInput: UpdateProductInput!): Product!
+  deleteProduct(productId: String!): Boolean!
   createBoard(createBoardInput: CreateBoardInput!): String
 }
 

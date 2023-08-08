@@ -5,6 +5,7 @@ import { ProductTag } from 'src/apis/productsTags/entities/productTag.entity';
 import { User } from 'src/apis/users/entities/user.entity';
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -54,4 +55,13 @@ export class Product {
   @ManyToMany(() => ProductTag, (productTag) => productTag.products)
   @Field(() => [ProductTag])
   productTags: ProductTag[];
+
+  // @CreateDateColumn() // 생성 시간 기록
+  // createdAt: Date;
+
+  // @UpdateDateColumn() // 수정 시간 기록
+  // updatedAt: Date;
+
+  @DeleteDateColumn() // 소프트삭제 시간 기록
+  deletedAt: Date;
 }
