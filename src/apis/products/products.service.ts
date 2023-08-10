@@ -21,14 +21,14 @@ export class ProductsService {
 
   findAll(): Promise<Product[]> {
     return this.productsRepository.find({
-      relations: ['productsSaleslocation'],
+      relations: ['productsSaleslocation', 'productCategory'],
     });
   }
 
   findOne({ productId }: IProductServiceFindOne): Promise<Product> {
     return this.productsRepository.findOne({
       where: { id: productId },
-      relations: ['productsSaleslocation'],
+      relations: ['productsSaleslocation', 'productCategory'],
     });
   }
 
@@ -44,7 +44,8 @@ export class ProductsService {
     // return result;
     // 2. 상품과 상품 거래 위치를 같이 등록
 
-    const { productsSaleslocation, ...product } = createProductInput;
+    const { productsSaleslocation, productCategoryId, ...product } =
+      createProductInput;
 
     const result = await this.productsSaleslocationsService.create({
       productsSaleslocation: { ...productsSaleslocation },
@@ -55,6 +56,11 @@ export class ProductsService {
     const result2 = await this.productsRepository.save({
       ...product,
       productsSaleslocation: result,
+      productCategory: {
+        id: productCategoryId,
+        // 만약에, name까지 받고 싶으면?
+        //  => createProductInput에서 name까지 포함해서 받아야 한다.
+      },
     });
 
     return result2;
