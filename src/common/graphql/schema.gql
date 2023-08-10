@@ -9,11 +9,6 @@ type Board {
   contents: String!
 }
 
-type ProductCategory {
-  id: String!
-  name: String!
-}
-
 type ProductSaleslocation {
   id: String!
   address: String!
@@ -27,6 +22,11 @@ type ProductSaleslocation {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type ProductCategory {
+  id: String!
+  name: String!
+}
 
 type ProductTag {
   id: String!
@@ -69,12 +69,22 @@ input CreateProductInput {
   name: String!
   description: String!
   price: Int!
+  productsSaleslocation: ProductSaleslocationInput!
+}
+
+input ProductSaleslocationInput {
+  address: String!
+  addressDetail: String!
+  lat: Float!
+  lng: Float!
+  meetingTime: DateTime!
 }
 
 input UpdateProductInput {
   name: String
   description: String
   price: Int
+  productsSaleslocation: ProductSaleslocationInput
 }
 
 input CreateBoardInput {

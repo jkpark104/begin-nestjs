@@ -9,31 +9,55 @@ import {
   IProductsServiceCreate,
   IProductsServiceDelete,
 } from './interfaces/products-service.interface';
+import { ProductsSaleslocationsService } from '../productsSaleslocations/productsSaleslocations.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>,
+    private readonly productsSaleslocationsService: ProductsSaleslocationsService,
   ) {}
 
   findAll(): Promise<Product[]> {
-    return this.productsRepository.find();
+    return this.productsRepository.find({
+      relations: ['productsSaleslocation'],
+    });
   }
 
   findOne({ productId }: IProductServiceFindOne): Promise<Product> {
-    return this.productsRepository.findOne({ where: { id: productId } });
+    return this.productsRepository.findOne({
+      where: { id: productId },
+      relations: ['productsSaleslocation'],
+    });
   }
 
-  create({ createProductInput }: IProductsServiceCreate): Promise<Product> {
-    const result = this.productsRepository.save({
-      ...createProductInput,
+  async create({
+    createProductInput,
+  }: IProductsServiceCreate): Promise<Product> {
+    // 1. 상품 하나만 등록
+    // const result = this.productsRepository.save({
+    //   ...createProductInput,
+    // });
+    // // await 해주지 않아도 브라우저에게 보내기 전에 자동으로 await 해준다.
+    // // nest만 해당 기능을 제공한다. express는 제공하지 않는다.
+    // return result;
+    // 2. 상품과 상품 거래 위치를 같이 등록
+
+    const { productsSaleslocation, ...product } = createProductInput;
+
+    const result = await this.productsSaleslocationsService.create({
+      productsSaleslocation: { ...productsSaleslocation },
+    });
+    // 서비스를 타고 가야 하는 이유는..?
+    //  레파지토리에 직접 접근하면 검증 로직을 통일 시킬 수 없음
+
+    const result2 = await this.productsRepository.save({
+      ...product,
+      productsSaleslocation: result,
     });
 
-    // await 해주지 않아도 브라우저에게 보내기 전에 자동으로 await 해준다.
-    // nest만 해당 기능을 제공한다. express는 제공하지 않는다.
-
-    return result;
+    return result2;
   }
 
   async update({
