@@ -1,6 +1,8 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ProductsSaleslocationsService } from '../productsSaleslocations/productsSaleslocations.service';
+import { ProductsTagsService } from '../productsTags/productsTags.service';
 import { Product } from './entities/product.entity';
 import {
   IProductServiceFindOne,
@@ -9,7 +11,6 @@ import {
   IProductsServiceCreate,
   IProductsServiceDelete,
 } from './interfaces/products-service.interface';
-import { ProductsSaleslocationsService } from '../productsSaleslocations/productsSaleslocations.service';
 
 @Injectable()
 export class ProductsService {
@@ -17,6 +18,7 @@ export class ProductsService {
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>,
     private readonly productsSaleslocationsService: ProductsSaleslocationsService,
+    private readonly productsTagsService: ProductsTagsService,
   ) {}
 
   findAll(): Promise<Product[]> {
@@ -44,14 +46,36 @@ export class ProductsService {
     // return result;
     // 2. 상품과 상품 거래 위치를 같이 등록
 
-    const { productsSaleslocation, productCategoryId, ...product } =
-      createProductInput;
+    const {
+      productsSaleslocation,
+      productCategoryId,
+      productTags,
+      ...product
+    } = createProductInput;
 
+    // 2-1) 상품거래 위치 등록
     const result = await this.productsSaleslocationsService.create({
       productsSaleslocation: { ...productsSaleslocation },
     });
     // 서비스를 타고 가야 하는 이유는..?
     //  레파지토리에 직접 접근하면 검증 로직을 통일 시킬 수 없음
+
+    // 2-2) 상품태그 등록
+    // productTags는 ["#전자제품", "#영등포", "#컴퓨터"]와 같은 형태로 받아온다.
+    const tagNames = productTags.map((el) => el.replace('#', ''));
+    const prevTags = await this.productsTagsService.findByNames({ tagNames });
+
+    const temp = [];
+    tagNames.forEach((tagName) => {
+      const isExists = prevTags.find((prevTag) => prevTag.name === tagName);
+
+      if (!isExists) {
+        temp.push({ name: tagName });
+      }
+    });
+
+    const newTags = await this.productsTagsService.bulkInsert({ names: temp }); // bulk-insert save()로 불가능
+    const tags = [...prevTags, ...newTags.identifiers];
 
     const result2 = await this.productsRepository.save({
       ...product,
@@ -61,6 +85,7 @@ export class ProductsService {
         // 만약에, name까지 받고 싶으면?
         //  => createProductInput에서 name까지 포함해서 받아야 한다.
       },
+      productTags: tags,
     });
 
     return result2;
@@ -76,9 +101,33 @@ export class ProductsService {
     // 검증은 서비스에서 한다.
     this.checkSoldOut({ product });
 
+    const { productTags, productCategoryId, ...restUpdateProductInput } =
+      updateProductInput;
+
+    const tagNames = productTags.map((el) => el.replace('#', ''));
+    const prevTags = await this.productsTagsService.findByNames({ tagNames });
+
+    const temp = [];
+    tagNames.forEach((tagName) => {
+      const isExists = prevTags.find((prevTag) => prevTag.name === tagName);
+
+      if (!isExists) {
+        temp.push({ name: tagName });
+      }
+    });
+
+    const newTags = await this.productsTagsService.bulkInsert({ names: temp }); // bulk-insert save()로 불가능
+    const tags = [...prevTags, ...newTags.identifiers];
+
     const result = this.productsRepository.save({
       ...product, // 수정 후, 수정되지 않은 다른 결과값까지 모두 객체로 반환하고 싶다면, ...product을 사용한다.
-      ...updateProductInput,
+      ...restUpdateProductInput,
+      productCategory: {
+        id: productCategoryId,
+        // 만약에, name까지 받고 싶으면?
+        //  => createProductInput에서 name까지 포함해서 받아야 한다.
+      },
+      productTags: tags,
     });
     // id: productId, // id가 있으면 update, 없으면 create로 동작한다.
 

@@ -5,9 +5,18 @@ import { ProductsSaleslocationsService } from '../productsSaleslocations/product
 import { Product } from './entities/product.entity';
 import { ProductsResolver } from './products.resolver';
 import { ProductsService } from './products.service';
+import { ProductTag } from '../productsTags/entities/productTag.entity';
+import { ProductsTagsService } from '../productsTags/productsTags.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, ProductSaleslocation])],
-  providers: [ProductsResolver, ProductsService, ProductsSaleslocationsService],
+  imports: [
+    TypeOrmModule.forFeature([Product, ProductSaleslocation, ProductTag]),
+  ],
+  providers: [
+    ProductsResolver,
+    ProductsService,
+    ProductsSaleslocationsService,
+    ProductsTagsService,
+  ],
 })
 export class ProductsModule {}

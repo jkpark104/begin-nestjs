@@ -76,6 +76,8 @@ input UpdateProductInput {
   description: String
   price: Int
   productsSaleslocation: ProductSaleslocationInput
+  productCategoryId: String
+  productTags: [String!]
 }
 
 input ProductSaleslocationInput {
