@@ -2,6 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type User {
+  id: String!
+  email: String!
+  name: String!
+  age: Int!
+}
+
 type Board {
   number: Int!
   writer: String!
@@ -34,13 +41,6 @@ type ProductTag {
   products: [Product!]!
 }
 
-type User {
-  id: String!
-  email: String!
-  name: String!
-  age: Int!
-}
-
 type Product {
   id: String!
   name: String!
@@ -60,11 +60,12 @@ type Query {
 }
 
 type Mutation {
+  login(email: String!, password: String!): String!
+  createUser(email: String!, password: String!, name: String!, age: Int!): User!
   createBoard(createBoardInput: CreateBoardInput!): String
   createProduct(name: String!): ProductCategory!
   updateProduct(productId: String!, updateProductInput: UpdateProductInput!): Product!
   deleteProduct(productId: String!): Boolean!
-  createUser(email: String!, password: String!, name: String!, age: Int!): User!
 }
 
 input CreateBoardInput {
