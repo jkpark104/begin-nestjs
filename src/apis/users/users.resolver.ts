@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { IContext } from 'src/common/interfaces/context';
-import { GqlAuthAccessGuard } from '../auth/guards/gql-auth.guard';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
@@ -10,7 +10,7 @@ export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   // @UseGuards(AuthGuard('나만의인가')) // rest api의 인가 방식
-  @UseGuards(GqlAuthAccessGuard)
+  @UseGuards(GqlAuthGuard('access'))
   @Query(() => String)
   fetchUser(@Context() context: IContext): string {
     console.log('====================');

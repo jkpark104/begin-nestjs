@@ -5,6 +5,7 @@ import { UsersService } from '../users/users.service';
 import {
   IAuthServiceGetAccessToken,
   IAuthServiceLogin,
+  IAuthServiceRestoreAccessToken,
   IAuthServiceSetRefreshToken,
 } from './interfaces/auth-service.interface';
 
@@ -41,6 +42,10 @@ export class AuthService {
       throw new UnprocessableEntityException('Password is incorrect.');
     }
 
+    return this.getAccessToken({ user });
+  }
+
+  restoreAccessToken({ user }: IAuthServiceRestoreAccessToken) {
     return this.getAccessToken({ user });
   }
 

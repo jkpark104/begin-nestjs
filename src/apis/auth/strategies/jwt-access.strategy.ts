@@ -14,7 +14,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
       //   return accessToken;
       // },
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrkey: '나의비밀번호',
+      secretOrKey: '나의비밀번호',
     });
     // 1. 비밀번호 검증
     // 2. 만료시간 검증
