@@ -20,6 +20,7 @@ import { UsersModule } from './apis/users/users.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/common/graphql/schema.gql',
+      context: ({ req, res }) => ({ req, res }), // default: req 존재
     }),
     TypeOrmModule.forRoot({
       type: process.env.DATABASE_TYPE as 'mysql',
