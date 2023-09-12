@@ -43,27 +43,18 @@ export class PointsTransactionsService {
 
       await queryRunner.manager.save(pointTransaction);
 
-      // 2. 유저의 돈 찾아오기
-      // const user = await this.usersRepository.findOne({
-      //   where: { id: _user.id },
-      // });
-
-      const user = await queryRunner.manager.findOne(User, {
-        where: { id: _user.id }, // row-lock
-        lock: { mode: 'pessimistic_write' },
-      });
-
-      // 3. 유저의 돈 업데이트
-      const updatedUser = this.usersRepository.create({
-        ...user, // id가 있으면 업데이트, 없으면 새로 생성
-        point: user.point + amount,
-      });
-
-      await queryRunner.manager.save(updatedUser);
+      // 2. 유저의 돈 찾아와 바로 업데이트
+      // - 숫자일 때 가능 => 숫자가 아니면 직접 lock 걸기
+      await queryRunner.manager.increment(
+        User,
+        { id: _user.id },
+        'point',
+        amount,
+      );
 
       await queryRunner.commitTransaction();
 
-      // 4. 최종결과 브라우저에 돌려주기
+      // 3. 최종결과 브라우저에 돌려주기
       return pointTransaction;
     } catch (error) {
       await queryRunner.rollbackTransaction();
