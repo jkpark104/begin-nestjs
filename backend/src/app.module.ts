@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PointsTransactionsModule } from './apis/_pointsTransactions/pointsTransactions.module';
 import { AuthModule } from './apis/auth/auth.module';
 import { BoardsModule } from './apis/boards/boards.module';
+import { PaymentsModule } from './apis/payments/payments.module';
 import { ProductsModule } from './apis/products/products.module';
 import { ProductsCategoriesModule } from './apis/productsCategories/productsCategories.module';
 import { UsersModule } from './apis/users/users.module';
@@ -14,6 +15,7 @@ import { UsersModule } from './apis/users/users.module';
   imports: [
     AuthModule,
     BoardsModule,
+    PaymentsModule,
     PointsTransactionsModule,
     ProductsModule,
     ProductsCategoriesModule,
