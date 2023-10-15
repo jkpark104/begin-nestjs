@@ -10,7 +10,7 @@ export class FilesResolver {
   uploadFile(
     @Args({ name: 'file', type: () => GraphQLUpload }) file: FileUpload, // GraphQL에서 파일 받아옴
   ): // 브라우저에서 파일 받아옴
-  string {
+  Promise<string> {
     return this.filesService.upload({ file });
   }
 }
